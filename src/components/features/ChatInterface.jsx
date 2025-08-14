@@ -98,7 +98,7 @@ export const ChatInterface = () => {
     try {
       await navigator.clipboard.writeText(text);
       toast.success('متن کپی شد');
-    } catch (error) {
+    } catch {
       toast.error('خطا در کپی کردن متن');
     }
   };
