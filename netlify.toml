@@ -94,12 +94,12 @@
 
 [context.production.environment]
   VITE_API_BASE_URL = "https://api.medogram.ir"
-  VITE_LOCAL_API_URL = "http://127.0.0.1:8000"
+  VITE_LOCAL_API_URL = "https://api.medogram.ir"
 
 [context.staging.environment]
-  VITE_API_BASE_URL = "https://staging-api.medogram.ir"
-  VITE_LOCAL_API_URL = "http://127.0.0.1:8000"
+  VITE_API_BASE_URL = "https://api.medogram.ir"
+  VITE_LOCAL_API_URL = "https://api.medogram.ir"
 
 [context.deploy-preview.environment]
-  VITE_API_BASE_URL = "https://staging-api.medogram.ir"
-  VITE_LOCAL_API_URL = "http://127.0.0.1:8000"
+  VITE_API_BASE_URL = "https://api.medogram.ir"
+  VITE_LOCAL_API_URL = "https://api.medogram.ir"

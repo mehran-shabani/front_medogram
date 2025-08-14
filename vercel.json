@@ -60,13 +60,13 @@
     }
   ],
   "env": {
-    "VITE_API_BASE_URL": "@vite_api_base_url",
-    "VITE_LOCAL_API_URL": "@vite_local_api_url"
+    "VITE_API_BASE_URL": "https://api.medogram.ir",
+    "VITE_LOCAL_API_URL": "https://api.medogram.ir"
   },
   "build": {
     "env": {
-      "VITE_API_BASE_URL": "@vite_api_base_url",
-      "VITE_LOCAL_API_URL": "@vite_local_api_url"
+      "VITE_API_BASE_URL": "https://api.medogram.ir",
+      "VITE_LOCAL_API_URL": "https://api.medogram.ir"
     }
   },
   "functions": {
