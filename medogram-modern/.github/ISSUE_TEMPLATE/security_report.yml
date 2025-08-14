@@ -1,0 +1,176 @@
+name: 🔒 Security Report
+description: Report a security vulnerability
+title: "[SECURITY]: "
+labels: ["security", "urgent"]
+assignees: ["medogram-team"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # ⚠️ Security Vulnerability Report
+        
+        **IMPORTANT:** If this is a critical security vulnerability, please consider reporting it privately through our security policy instead of creating a public issue.
+        
+        For sensitive security issues, please email: security@medogram.ir
+
+  - type: checkboxes
+    id: severity-check
+    attributes:
+      label: Severity Assessment
+      description: Please assess the severity of this security issue
+      options:
+        - label: This is NOT a critical security vulnerability that could lead to immediate harm
+          required: true
+        - label: I understand that public disclosure may put users at risk
+          required: true
+
+  - type: dropdown
+    id: vulnerability-type
+    attributes:
+      label: Vulnerability Type
+      description: What type of security issue is this?
+      options:
+        - Authentication/Authorization
+        - Cross-Site Scripting (XSS)
+        - SQL Injection
+        - Cross-Site Request Forgery (CSRF)
+        - Insecure Direct Object References
+        - Security Misconfiguration
+        - Sensitive Data Exposure
+        - Broken Access Control
+        - Cryptographic Issues
+        - Code Injection
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: How severe is this vulnerability?
+      options:
+        - Low - Minimal impact, requires specific conditions
+        - Medium - Moderate impact, affects some users
+        - High - Significant impact, affects many users
+        - Critical - Severe impact, immediate threat
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Vulnerability Description
+      description: Detailed description of the security vulnerability
+      placeholder: Describe the vulnerability, its impact, and potential consequences...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the vulnerability
+      placeholder: |
+        1. Go to...
+        2. Enter...
+        3. Click...
+        4. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proof-of-concept
+    attributes:
+      label: Proof of Concept
+      description: Provide proof of concept (code, screenshots, etc.)
+      placeholder: |
+        ```javascript
+        // Example exploit code
+        ```
+        
+        Or describe the exploit scenario...
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact Assessment
+      description: What is the potential impact of this vulnerability?
+      placeholder: |
+        - Data that could be compromised
+        - Systems that could be affected
+        - Users that could be impacted
+        - Business consequences
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-components
+    attributes:
+      label: Affected Components
+      description: Which parts of the application are affected?
+      placeholder: |
+        - Login system
+        - API endpoints
+        - Frontend components
+        - Database queries
+        - etc.
+    validations:
+      required: true
+
+  - type: input
+    id: affected-versions
+    attributes:
+      label: Affected Versions
+      description: Which versions are affected by this vulnerability?
+      placeholder: e.g., v2.0.0 - v2.1.5, or "all versions"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: Environment where the vulnerability was discovered
+      placeholder: |
+        - Browser: Chrome 120.0.0.0
+        - OS: Windows 11
+        - Application version: v2.0.0
+        - Other relevant details...
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Suggested Mitigation
+      description: If you have suggestions for fixing this vulnerability
+      placeholder: |
+        Possible solutions or mitigations:
+        - Input validation
+        - Authentication checks
+        - Encryption
+        - etc.
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Any relevant references (CVE, security advisories, etc.)
+      placeholder: |
+        - CVE-XXXX-XXXX
+        - OWASP link
+        - Security research papers
+        - etc.
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        **Responsible Disclosure:**
+        - We will acknowledge receipt of your report within 48 hours
+        - We will provide regular updates on our progress
+        - We will credit you for the discovery (if desired)
+        - Please allow us reasonable time to address the issue before public disclosure
+        
+        **Contact:** For critical vulnerabilities, email security@medogram.ir
