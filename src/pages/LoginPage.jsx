@@ -45,7 +45,7 @@ export const LoginPage = () => {
       await registerUser(data.phoneNumber);
       setPhoneNumber(data.phoneNumber);
       setStep(2);
-    } catch (error) {
+    } catch {
       // Error is handled by context
     }
   };
@@ -54,7 +54,7 @@ export const LoginPage = () => {
     try {
       await verify(phoneNumber, data.code);
       navigate('/');
-    } catch (error) {
+    } catch {
       // Error is handled by context
     }
   };
