@@ -1,3 +1,5 @@
+/* eslint-env node */
+/* global require */
 /**
  * Tests for the GitHub Pages deployment workflow.
  * Detected testing framework: will run under Jest/Vitest/Mocha (BDD style).
@@ -11,7 +13,6 @@
  * - Parse YAML when possible (if js-yaml or yaml is present in the repo). Otherwise, assert via textual checks.
  * - Validate triggers, permissions, concurrency, steps, environment variables, and deploy job wiring.
  */
-
 const fs = require('fs');
 const path = require('path');
 
