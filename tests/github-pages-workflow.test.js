@@ -141,7 +141,7 @@ describe('GitHub Pages workflow configuration', () => {
       it('defines concurrency group "pages" and does not cancel in progress', () => {
         if (doc) {
           expect(doc.concurrency).toBeTruthy();
-          expect(doc.concurrency.group).toBe('pages' || 'pages'); // normalize
+          expect(doc.concurrency.group).toBe('pages'); // normalize
           expect(Boolean(doc.concurrency['cancel-in-progress'])).toBe(false);
         } else {
           expect(/concurrency:\s*\n\s*group:\s*["']?pages["']?\s*\n\s*cancel-in-progress:\s*false/m.test(wf.content)).toBe(true);
