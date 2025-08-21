@@ -41,7 +41,7 @@ function readFileSafe(p) {
   try { return fs.readFileSync(p, 'utf8'); } catch { return null; }
 }
 
-function getWorkflowByName(name) {
+function getWorkflowByName() {
   const files = findWorkflowFiles();
   for (const file of files) {
     const txt = readFileSafe(file);
