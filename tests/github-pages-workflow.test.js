@@ -1,5 +1,6 @@
 /* eslint-env node */
 /* global require */
+/* global process */
 /**
  * Tests for the GitHub Pages deployment workflow.
  * Detected testing framework: will run under Jest/Vitest/Mocha (BDD style).
