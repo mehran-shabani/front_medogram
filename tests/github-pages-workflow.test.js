@@ -59,7 +59,7 @@ function maybeLoadYamlParser() {
 }
 
 describe('GitHub Pages workflow configuration', () => {
-  const wf = getWorkflowByName('Deploy to GitHub Pages');
+  const wf = getWorkflowByName();
 
   it('locates the "Deploy to GitHub Pages" workflow file', () => {
     expect(wf && wf.file).toBeTruthy();
