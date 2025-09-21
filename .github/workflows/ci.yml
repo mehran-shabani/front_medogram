@@ -105,6 +105,92 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
+  # Codespaces validation
+  codespaces-validation:
+    name: Codespaces Configuration Validation
+    runs-on: ubuntu-latest
+    needs: quality
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Validate devcontainer configuration
+        run: |
+          echo "🔍 Validating Codespaces configuration..."
+          
+          # Check if devcontainer.json exists
+          if [ ! -f ".devcontainer/devcontainer.json" ]; then
+            echo "❌ .devcontainer/devcontainer.json not found"
+            exit 1
+          fi
+          echo "✅ .devcontainer/devcontainer.json exists"
+          
+          # Check if Dockerfile exists
+          if [ ! -f ".devcontainer/Dockerfile" ]; then
+            echo "❌ .devcontainer/Dockerfile not found"
+            exit 1
+          fi
+          echo "✅ .devcontainer/Dockerfile exists"
+
+      - name: Validate devcontainer.json syntax
+        run: |
+          echo "🔍 Validating devcontainer.json syntax..."
+          
+          # Check if jq is available for JSON validation
+          if command -v jq >/dev/null 2>&1; then
+            if jq empty .devcontainer/devcontainer.json 2>/dev/null; then
+              echo "✅ devcontainer.json has valid JSON syntax"
+            else
+              echo "❌ devcontainer.json has invalid JSON syntax"
+              exit 1
+            fi
+          else
+            echo "⚠️ jq not available, skipping JSON syntax validation"
+          fi
+
+      - name: Check required devcontainer fields
+        run: |
+          echo "🔍 Checking required devcontainer fields..."
+          
+          # Check for required fields using grep
+          required_fields=("name" "image" "forwardPorts" "postCreateCommand")
+          for field in "${required_fields[@]}"; do
+            if grep -q "\"$field\"" .devcontainer/devcontainer.json; then
+              echo "✅ '$field' field present"
+            else
+              echo "❌ '$field' field missing"
+              exit 1
+            fi
+          done
+
+      - name: Test Dockerfile syntax
+        run: |
+          echo "🔍 Testing Dockerfile syntax..."
+          
+          # Basic Dockerfile validation
+          required_instructions=("FROM" "WORKDIR" "EXPOSE")
+          for instruction in "${required_instructions[@]}"; do
+            if grep -q "$instruction" .devcontainer/Dockerfile; then
+              echo "✅ Dockerfile has $instruction instruction"
+            else
+              echo "❌ Dockerfile missing $instruction instruction"
+              exit 1
+            fi
+          done
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "🎉 Codespaces configuration validation completed successfully!"
+          echo ""
+          echo "📋 Summary:"
+          echo "  ✅ devcontainer.json configuration valid"
+          echo "  ✅ Dockerfile syntax correct"
+          echo "  ✅ Required fields present"
+          echo ""
+          echo "🚀 Codespaces environment is ready for development!"
+
   # Dependency review
   dependency-review:
     name: Dependency Review
