@@ -44,7 +44,7 @@
     "globals": "^16.3.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^4.1.12",
-    "vite": "^7.1.2"
+    "vite": "^7.1.5"
   },
   "engines": {
     "node": ">=18.0.0"
