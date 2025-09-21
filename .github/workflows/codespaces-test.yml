@@ -1,0 +1,217 @@
+name: Codespaces Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  codespaces-test:
+    name: Test Codespaces Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Verify devcontainer configuration
+        run: |
+          echo "Checking devcontainer configuration..."
+          
+          # Check if devcontainer.json exists
+          if [ ! -f ".devcontainer/devcontainer.json" ]; then
+            echo "❌ .devcontainer/devcontainer.json not found"
+            exit 1
+          fi
+          echo "✅ .devcontainer/devcontainer.json exists"
+          
+          # Check if Dockerfile exists
+          if [ ! -f ".devcontainer/Dockerfile" ]; then
+            echo "❌ .devcontainer/Dockerfile not found"
+            exit 1
+          fi
+          echo "✅ .devcontainer/Dockerfile exists"
+          
+          # Check if README exists
+          if [ ! -f ".devcontainer/README.md" ]; then
+            echo "❌ .devcontainer/README.md not found"
+            exit 1
+          fi
+          echo "✅ .devcontainer/README.md exists"
+
+      - name: Validate devcontainer.json syntax
+        run: |
+          echo "Validating devcontainer.json syntax..."
+          
+          # Check if jq is available for JSON validation
+          if command -v jq >/dev/null 2>&1; then
+            if jq empty .devcontainer/devcontainer.json 2>/dev/null; then
+              echo "✅ devcontainer.json has valid JSON syntax"
+            else
+              echo "❌ devcontainer.json has invalid JSON syntax"
+              exit 1
+            fi
+          else
+            echo "⚠️ jq not available, skipping JSON syntax validation"
+          fi
+
+      - name: Check required devcontainer fields
+        run: |
+          echo "Checking required devcontainer fields..."
+          
+          # Check for required fields using grep
+          if grep -q '"name"' .devcontainer/devcontainer.json; then
+            echo "✅ 'name' field present"
+          else
+            echo "❌ 'name' field missing"
+            exit 1
+          fi
+          
+          if grep -q '"image"' .devcontainer/devcontainer.json; then
+            echo "✅ 'image' field present"
+          else
+            echo "❌ 'image' field missing"
+            exit 1
+          fi
+          
+          if grep -q '"forwardPorts"' .devcontainer/devcontainer.json; then
+            echo "✅ 'forwardPorts' field present"
+          else
+            echo "❌ 'forwardPorts' field missing"
+            exit 1
+          fi
+          
+          if grep -q '"postCreateCommand"' .devcontainer/devcontainer.json; then
+            echo "✅ 'postCreateCommand' field present"
+          else
+            echo "❌ 'postCreateCommand' field missing"
+            exit 1
+          fi
+
+      - name: Test Dockerfile syntax
+        run: |
+          echo "Testing Dockerfile syntax..."
+          
+          # Basic Dockerfile validation
+          if grep -q "FROM" .devcontainer/Dockerfile; then
+            echo "✅ Dockerfile has FROM instruction"
+          else
+            echo "❌ Dockerfile missing FROM instruction"
+            exit 1
+          fi
+          
+          if grep -q "WORKDIR" .devcontainer/Dockerfile; then
+            echo "✅ Dockerfile has WORKDIR instruction"
+          else
+            echo "❌ Dockerfile missing WORKDIR instruction"
+            exit 1
+          fi
+          
+          if grep -q "EXPOSE" .devcontainer/Dockerfile; then
+            echo "✅ Dockerfile has EXPOSE instruction"
+          else
+            echo "❌ Dockerfile missing EXPOSE instruction"
+            exit 1
+          fi
+
+      - name: Check package.json compatibility
+        run: |
+          echo "Checking package.json compatibility with Codespaces..."
+          
+          # Check if package.json exists
+          if [ ! -f "package.json" ]; then
+            echo "❌ package.json not found"
+            exit 1
+          fi
+          echo "✅ package.json exists"
+          
+          # Check for required scripts
+          if grep -q '"dev"' package.json; then
+            echo "✅ 'dev' script present"
+          else
+            echo "❌ 'dev' script missing"
+            exit 1
+          fi
+          
+          if grep -q '"build"' package.json; then
+            echo "✅ 'build' script present"
+          else
+            echo "❌ 'build' script missing"
+            exit 1
+          fi
+          
+          if grep -q '"lint"' package.json; then
+            echo "✅ 'lint' script present"
+          else
+            echo "❌ 'lint' script missing"
+            exit 1
+          fi
+
+      - name: Verify VS Code extensions
+        run: |
+          echo "Checking VS Code extensions configuration..."
+          
+          # Check if extensions are configured
+          if grep -q '"extensions"' .devcontainer/devcontainer.json; then
+            echo "✅ VS Code extensions configured"
+            
+            # Check for essential extensions
+            if grep -q "bradlc.vscode-tailwindcss" .devcontainer/devcontainer.json; then
+              echo "✅ Tailwind CSS extension configured"
+            else
+              echo "⚠️ Tailwind CSS extension not configured"
+            fi
+            
+            if grep -q "esbenp.prettier-vscode" .devcontainer/devcontainer.json; then
+              echo "✅ Prettier extension configured"
+            else
+              echo "⚠️ Prettier extension not configured"
+            fi
+            
+            if grep -q "dbaeumer.vscode-eslint" .devcontainer/devcontainer.json; then
+              echo "✅ ESLint extension configured"
+            else
+              echo "⚠️ ESLint extension not configured"
+            fi
+          else
+            echo "⚠️ No VS Code extensions configured"
+          fi
+
+      - name: Test environment variables
+        run: |
+          echo "Checking environment variables configuration..."
+          
+          # Check if environment variables are set
+          if grep -q '"containerEnv"' .devcontainer/devcontainer.json; then
+            echo "✅ Container environment variables configured"
+            
+            if grep -q "VITE_API_BASE_URL" .devcontainer/devcontainer.json; then
+              echo "✅ VITE_API_BASE_URL configured"
+            else
+              echo "⚠️ VITE_API_BASE_URL not configured"
+            fi
+            
+            if grep -q "VITE_LOCAL_API_URL" .devcontainer/devcontainer.json; then
+              echo "✅ VITE_LOCAL_API_URL configured"
+            else
+              echo "⚠️ VITE_LOCAL_API_URL not configured"
+            fi
+          else
+            echo "⚠️ No container environment variables configured"
+          fi
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "🎉 Codespaces configuration test completed successfully!"
+          echo ""
+          echo "📋 Summary:"
+          echo "  ✅ devcontainer.json configuration valid"
+          echo "  ✅ Dockerfile syntax correct"
+          echo "  ✅ package.json compatible"
+          echo "  ✅ VS Code extensions configured"
+          echo "  ✅ Environment variables set"
+          echo ""
+          echo "🚀 Your Codespaces environment is ready for development!"

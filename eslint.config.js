@@ -39,4 +39,24 @@ export default defineConfig([
 			'react-refresh/only-export-components': 'off',
 		},
 	},
+	{
+		files: ['tests/**/*.{js,jsx}'],
+		languageOptions: {
+			globals: {
+				...globals.node,
+				describe: 'readonly',
+				it: 'readonly',
+				test: 'readonly',
+				expect: 'readonly',
+				beforeAll: 'readonly',
+				afterAll: 'readonly',
+				beforeEach: 'readonly',
+				afterEach: 'readonly',
+			},
+		},
+		rules: {
+			'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+			'no-prototype-builtins': 'off',
+		},
+	},
 ])
