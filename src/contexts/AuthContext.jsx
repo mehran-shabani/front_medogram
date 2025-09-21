@@ -92,6 +92,7 @@ export const AuthProvider = ({ children }) => {
     
     try {
       const response = await authAPI.register(phoneNumber);
+      dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false }); // Clear loading state
       toast.success('کد تأیید برای شما ارسال شد');
       return response.data;
     } catch (error) {
@@ -99,6 +100,11 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: AUTH_ACTIONS.SET_ERROR, payload: errorMessage });
       toast.error(errorMessage);
       throw error;
+    } finally {
+      // Ensure loading is cleared even if there's an unexpected error
+      setTimeout(() => {
+        dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
+      }, 100);
     }
   };
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  PaperAirplaneIcon,
+  ArrowUpIcon,
   UserCircleIcon,
   SparklesIcon,
   ClipboardDocumentIcon,
@@ -263,7 +263,7 @@ export const ChatInterface = () => {
             loading={isLoading}
             className="flex-shrink-0"
           >
-            <PaperAirplaneIcon className="w-4 h-4" />
+            <ArrowUpIcon className="w-4 h-4" />
           </Button>
         </div>
         

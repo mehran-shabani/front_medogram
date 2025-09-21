@@ -21,14 +21,15 @@ const codeSchema = yup.object({
   code: yup
     .string()
     .required('کد تأیید الزامی است')
-    .length(4, 'کد تأیید باید 4 رقم باشد'),
+    .matches(/^\d{6}$/, 'کد تأیید باید دقیقاً 6 رقم باشد'),
 });
 
 export const LoginPage = () => {
   const [step, setStep] = useState(1); // 1: phone, 2: code
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [codeValue, setCodeValue] = useState('');
   const navigate = useNavigate();
-  const { register: registerUser, verify, loading, error } = useAuth();
+  const { register: registerUser, verify, loading, error, clearError } = useAuth();
 
   const phoneForm = useForm({
     resolver: yupResolver(phoneSchema),
@@ -38,29 +39,44 @@ export const LoginPage = () => {
   const codeForm = useForm({
     resolver: yupResolver(codeSchema),
     mode: 'onChange',
+    defaultValues: {
+      code: ''
+    }
   });
+
+  // Update form when codeValue changes
+  React.useEffect(() => {
+    codeForm.setValue('code', codeValue, { shouldValidate: true });
+  }, [codeValue, codeForm]);
 
   const handlePhoneSubmit = async (data) => {
     try {
+      clearError(); // Clear any previous errors
       await registerUser(data.phoneNumber);
       setPhoneNumber(data.phoneNumber);
       setStep(2);
-    } catch {
+      phoneForm.reset(); // Clear the phone form
+    } catch (error) {
       // Error is handled by context
+      console.error('Phone registration error:', error);
     }
   };
 
   const handleCodeSubmit = async (data) => {
     try {
+      clearError(); // Clear any previous errors
       await verify(phoneNumber, data.code);
       navigate('/');
-    } catch {
+    } catch (error) {
       // Error is handled by context
+      console.error('Code verification error:', error);
     }
   };
 
   const goBack = () => {
+    clearError(); // Clear any errors when going back
     setStep(1);
+    setCodeValue(''); // Reset the controlled input
     codeForm.reset();
   };
 
@@ -111,15 +127,16 @@ export const LoginPage = () => {
             ) : (
               <form onSubmit={codeForm.handleSubmit(handleCodeSubmit)} className="space-y-4">
                 <Input
-                  {...codeForm.register('code')}
+                  value={codeValue}
+                  onChange={(e) => setCodeValue(e.target.value)}
                   type="text"
                   label="کد تأیید"
-                  placeholder="1234"
+                  placeholder="123456"
                   leftIcon={KeyIcon}
                   error={codeForm.formState.errors.code?.message}
                   required
                   dir="ltr"
-                  maxLength={4}
+                  maxLength={6}
                 />
 
                 <div className="space-y-2">
