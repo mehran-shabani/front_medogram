@@ -160,13 +160,6 @@ export const LoginPage = () => {
                 {error}
               </motion.div>
             )}
-            
-            {/* Debug info - remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-2 text-xs text-gray-500">
-                Step: {step}, Loading: {loading ? 'true' : 'false'}, Error: {error || 'none'}
-              </div>
-            )}
           </CardContent>
         </Card>
 

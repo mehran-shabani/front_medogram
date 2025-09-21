@@ -1,3 +1,5 @@
+import tailwindcssRtl from 'tailwindcss-rtl';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -117,6 +119,6 @@ export default {
     },
   },
   plugins: [
-    require('tailwindcss-rtl'),
+    tailwindcssRtl,
   ],
 }
