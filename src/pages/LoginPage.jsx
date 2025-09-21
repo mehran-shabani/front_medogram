@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PhoneIcon, KeyIcon } from '@heroicons/react/24/outline';
@@ -21,16 +21,13 @@ const codeSchema = yup.object({
   code: yup
     .string()
     .required('کد تأیید الزامی است')
-    .test('is-six-digits', 'کد تأیید باید دقیقاً 6 رقم باشد', function(value) {
-      if (!value) return false;
-      const trimmed = value.trim();
-      return /^\d{6}$/.test(trimmed);
-    }),
+    .matches(/^\d{6}$/, 'کد تأیید باید دقیقاً 6 رقم باشد'),
 });
 
 export const LoginPage = () => {
   const [step, setStep] = useState(1); // 1: phone, 2: code
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [codeValue, setCodeValue] = useState('');
   const navigate = useNavigate();
   const { register: registerUser, verify, loading, error, clearError } = useAuth();
 
@@ -42,8 +39,15 @@ export const LoginPage = () => {
   const codeForm = useForm({
     resolver: yupResolver(codeSchema),
     mode: 'onChange',
-    reValidateMode: 'onChange',
+    defaultValues: {
+      code: ''
+    }
   });
+
+  // Update form when codeValue changes
+  React.useEffect(() => {
+    codeForm.setValue('code', codeValue, { shouldValidate: true });
+  }, [codeValue, codeForm]);
 
   const handlePhoneSubmit = async (data) => {
     try {
@@ -61,7 +65,6 @@ export const LoginPage = () => {
   const handleCodeSubmit = async (data) => {
     try {
       clearError(); // Clear any previous errors
-      console.log('Submitting code:', data);
       await verify(phoneNumber, data.code);
       navigate('/');
     } catch (error) {
@@ -73,21 +76,9 @@ export const LoginPage = () => {
   const goBack = () => {
     clearError(); // Clear any errors when going back
     setStep(1);
+    setCodeValue(''); // Reset the controlled input
     codeForm.reset();
   };
-
-  // Debug form state changes
-  useEffect(() => {
-    if (step === 2) {
-      console.log('Code form state:', {
-        isValid: codeForm.formState.isValid,
-        isDirty: codeForm.formState.isDirty,
-        isTouched: codeForm.formState.isTouched,
-        errors: codeForm.formState.errors,
-        values: codeForm.getValues(),
-      });
-    }
-  }, [codeForm.formState, step]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 flex items-center justify-center p-4">
@@ -136,11 +127,8 @@ export const LoginPage = () => {
             ) : (
               <form onSubmit={codeForm.handleSubmit(handleCodeSubmit)} className="space-y-4">
                 <Input
-                  {...codeForm.register('code', {
-                    onChange: (e) => {
-                      codeForm.trigger('code');
-                    }
-                  })}
+                  value={codeValue}
+                  onChange={(e) => setCodeValue(e.target.value)}
                   type="text"
                   label="کد تأیید"
                   placeholder="123456"
@@ -182,21 +170,6 @@ export const LoginPage = () => {
               >
                 {error}
               </motion.div>
-            )}
-            
-            {/* Debug info for code form */}
-            {step === 2 && (
-              <div className="mt-2 text-xs text-gray-500 bg-gray-100 p-2 rounded">
-                <div>Form Valid: {codeForm.formState.isValid ? 'true' : 'false'}</div>
-                <div>Form Dirty: {codeForm.formState.isDirty ? 'true' : 'false'}</div>
-                <div>Form Touched: {codeForm.formState.isTouched ? 'true' : 'false'}</div>
-                <div>Code Value: "{codeForm.watch('code')}"</div>
-                <div>Code Length: {codeForm.watch('code')?.length || 0}</div>
-                <div>Has Errors: {Object.keys(codeForm.formState.errors).length > 0 ? 'true' : 'false'}</div>
-                {codeForm.formState.errors.code && (
-                  <div>Error: {codeForm.formState.errors.code.message}</div>
-                )}
-              </div>
             )}
           </CardContent>
         </Card>
