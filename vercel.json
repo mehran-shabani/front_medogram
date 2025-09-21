@@ -69,11 +69,6 @@
       "VITE_LOCAL_API_URL": "https://api.medogram.ir"
     }
   },
-  "functions": {
-    "app/api/**": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
