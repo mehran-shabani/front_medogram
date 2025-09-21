@@ -24,7 +24,7 @@ RUN npm ci
 COPY . .
 
 # Expose ports
-EXPOSE 3000 5173
+EXPOSE 3000 5173 5174
 
 # Set environment variables
 ENV NODE_ENV=development

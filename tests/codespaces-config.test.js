@@ -39,7 +39,7 @@ test('Codespaces: devcontainer.json exists and is accessible', async () => {
   try {
     await access(devcontainerPath, constants.F_OK);
     assert.ok(true, 'devcontainer.json exists');
-  } catch (error) {
+  } catch {
     assert.fail('devcontainer.json should exist');
   }
 });
@@ -48,7 +48,7 @@ test('Codespaces: Dockerfile exists and is accessible', async () => {
   try {
     await access(dockerfilePath, constants.F_OK);
     assert.ok(true, 'Dockerfile exists');
-  } catch (error) {
+  } catch {
     assert.fail('Dockerfile should exist');
   }
 });
@@ -57,7 +57,7 @@ test('Codespaces: README.md exists and is accessible', async () => {
   try {
     await access(readmePath, constants.F_OK);
     assert.ok(true, 'README.md exists');
-  } catch (error) {
+  } catch {
     assert.fail('README.md should exist');
   }
 });
@@ -72,7 +72,7 @@ test('Codespaces: devcontainer.json has required fields', async () => {
   
   const requiredFields = ['name', 'image', 'forwardPorts', 'postCreateCommand'];
   for (const field of requiredFields) {
-    assert.ok(config.hasOwnProperty(field), `devcontainer.json should have '${field}' field`);
+    assert.ok(Object.prototype.hasOwnProperty.call(config, field), `devcontainer.json should have '${field}' field`);
   }
 });
 

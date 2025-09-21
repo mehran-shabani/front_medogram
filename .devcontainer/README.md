@@ -28,7 +28,8 @@ This repository is configured to work seamlessly with GitHub Codespaces for deve
 - **GitHub Actions** - Workflow management
 
 ### Ports
-- **5173** - Vite development server (auto-forwarded)
+- **5173** - Vite development server (primary)
+- **5174** - Vite development server (alternative if 5173 is busy)
 - **3000** - Alternative application port
 
 ### Environment Variables
