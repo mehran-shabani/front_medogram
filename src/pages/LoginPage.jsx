@@ -21,14 +21,14 @@ const codeSchema = yup.object({
   code: yup
     .string()
     .required('کد تأیید الزامی است')
-    .length(4, 'کد تأیید باید 4 رقم باشد'),
+    .length(6, 'کد تأیید باید 6 رقم باشد'),
 });
 
 export const LoginPage = () => {
   const [step, setStep] = useState(1); // 1: phone, 2: code
   const [phoneNumber, setPhoneNumber] = useState('');
   const navigate = useNavigate();
-  const { register: registerUser, verify, loading, error } = useAuth();
+  const { register: registerUser, verify, loading, error, clearError } = useAuth();
 
   const phoneForm = useForm({
     resolver: yupResolver(phoneSchema),
@@ -42,24 +42,30 @@ export const LoginPage = () => {
 
   const handlePhoneSubmit = async (data) => {
     try {
+      clearError(); // Clear any previous errors
       await registerUser(data.phoneNumber);
       setPhoneNumber(data.phoneNumber);
       setStep(2);
-    } catch {
+      phoneForm.reset(); // Clear the phone form
+    } catch (error) {
       // Error is handled by context
+      console.error('Phone registration error:', error);
     }
   };
 
   const handleCodeSubmit = async (data) => {
     try {
+      clearError(); // Clear any previous errors
       await verify(phoneNumber, data.code);
       navigate('/');
-    } catch {
+    } catch (error) {
       // Error is handled by context
+      console.error('Code verification error:', error);
     }
   };
 
   const goBack = () => {
+    clearError(); // Clear any errors when going back
     setStep(1);
     codeForm.reset();
   };
@@ -114,12 +120,12 @@ export const LoginPage = () => {
                   {...codeForm.register('code')}
                   type="text"
                   label="کد تأیید"
-                  placeholder="1234"
+                  placeholder="123456"
                   leftIcon={KeyIcon}
                   error={codeForm.formState.errors.code?.message}
                   required
                   dir="ltr"
-                  maxLength={4}
+                  maxLength={6}
                 />
 
                 <div className="space-y-2">
@@ -153,6 +159,13 @@ export const LoginPage = () => {
               >
                 {error}
               </motion.div>
+            )}
+            
+            {/* Debug info - remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-2 text-xs text-gray-500">
+                Step: {step}, Loading: {loading ? 'true' : 'false'}, Error: {error || 'none'}
+              </div>
             )}
           </CardContent>
         </Card>
