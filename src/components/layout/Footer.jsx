@@ -2,9 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   HeartIcon,
-  EnvelopeIcon,
-  PhoneIcon,
-  MapPinIcon
+  EnvelopeIcon
 } from '@heroicons/react/24/outline';
 import logoImage from '../../assets/images/medogram-logo.png';
 
