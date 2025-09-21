@@ -1,0 +1,47 @@
+# Environment files with sensitive information
+.env.private
+.env.local
+.env.production
+
+# Docker volumes and data
+volumes/
+data/
+backups/
+
+# SSL certificates
+nginx/ssl/
+ssl/
+*.pem
+*.key
+*.crt
+
+# Logs
+logs/
+*.log
+nginx-logs/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Docker override files
+docker-compose.override.yml
+docker-compose.local.yml

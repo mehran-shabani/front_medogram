@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # Frontend application from private registry
+  medogram-frontend:
+    image: ${REGISTRY_URL:-your-private-registry.com}/${NAMESPACE:-medogram}/${IMAGE_NAME:-medogram-frontend}:${IMAGE_TAG:-latest}
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-https://api.medogram.ir}
+      - VITE_LOCAL_API_URL=${VITE_LOCAL_API_URL:-http://127.0.0.1:8000}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.medogram.rule=Host(`${DOMAIN:-medogram.ir}`)"
+      - "traefik.http.routers.medogram.tls=true"
+      - "traefik.http.routers.medogram.tls.certresolver=letsencrypt"
+    networks:
+      - medogram-network
+    depends_on:
+      - redis
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD:-}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - medogram-network
+
+  # Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "${NGINX_PORT_HTTP:-80}:80"
+      - "${NGINX_PORT_HTTPS:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    depends_on:
+      - medogram-frontend
+    restart: unless-stopped
+    networks:
+      - medogram-network
+    profiles:
+      - production
+
+  # Watchtower for automatic updates (optional)
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=3600
+      - WATCHTOWER_INCLUDE_STOPPED=true
+      - WATCHTOWER_REVIVE_STOPPED=true
+    restart: unless-stopped
+    profiles:
+      - production
+
+  # Database (if needed)
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${DB_NAME:-medogram}
+      - POSTGRES_USER=${DB_USER:-medogram_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./backups:/backups
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    restart: unless-stopped
+    networks:
+      - medogram-network
+    profiles:
+      - production
+
+networks:
+  medogram-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  redis-data:
+    driver: local
+  nginx-logs:
+    driver: local
+  postgres-data:
+    driver: local
